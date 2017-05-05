@@ -2,7 +2,8 @@ from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
 from twisted.internet.defer import DeferredQueue
 from twisted.internet import reactor
-from main import *
+from main import GameSpace
+import json
 
 
 class Server(object):
@@ -25,25 +26,33 @@ class ServerCommandConnection(Protocol):
         self.server = server
 
     def connectionMade(self):
-        print "connection made!!"
-        gs = GameSpace(self, 1)
-        gs.main()
-        return
+        print "Command connection established"
+        self.transport.write("start data connection")
+        reactor.listenTCP(self.server.dataPort1, ServerDataConnectionFactory(self))
 
     def dataReceived(self, data):
-        if data == "start data connection":
-            reactor.listenTCP(self.dataPort1, ServerDataConnectionFactory(self))
+        pass
 
 class ServerDataConnection(Protocol):
     def __init__(self, server):
         self.server = server
+        self.x = 0
+        self.y = 0
 
     def connectionMade(self):
         print "Data connection established"
         # start the game
+        try:
+            print "starting player 1"
+            GameSpace(self, 1)
+        except:
+            return
 
     def dataReceived(self, data):
         print "data: ", data
+        pos = json.loads(data)
+        self.x = pos["x"]
+        self.y = pos["y"]
 
 class ServerDataConnectionFactory(Factory):
     def __init__(self, server):

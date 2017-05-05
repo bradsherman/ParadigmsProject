@@ -20,11 +20,19 @@ class Paddle(pygame.sprite.Sprite):
         self.rect_orig = self.rect
         self.speed = 0
 
+        # print "paddle created at " + self.rect.centerx + ", " + self.rect.centery
+        print "in paddle"
+        # print "paddle created at " + self.rect.center
+
         self.gs = gs
 
     def tick(self):
         self.rect.clamp_ip(self.gs.screen.get_rect())
         pass
+
+    def update(self, x, y):
+        self.rect.centerx = x
+        self.rect.centery = y
 
     def move(self, key):
         inc = 15

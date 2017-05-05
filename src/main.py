@@ -3,9 +3,14 @@ import sys
 from paddle import Paddle
 from ball import Ball
 from brick import Brick
+from twisted.internet.defer import DeferredQueue
 
 
 class GameSpace:
+    def __init__(self, DataConnection, player):
+        self.dataConn = DataConnection
+        self.player = player
+
     def main(self):
         pygame.init()
         pygame.key.set_repeat(1, 50)
@@ -48,7 +53,7 @@ class GameSpace:
             pygame.display.flip()
 
     def draw_bricks(self):
-        for i in range(65, self.width - 65, self.width/5):
+        for i in range(65, self.width - 65, self.width / 5):
             for j in [25, 75]:
                 self.bricks.append(Brick(self, i, j))
             for k in [self.height - 25, self.height - 75]:

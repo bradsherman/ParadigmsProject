@@ -47,4 +47,5 @@ class Ball(pygame.sprite.Sprite):
 		    self.speed_y = - self.speed_y
 		elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
 		    self.speed_x = - self.speed_x
+		break
 	self.rect = self.rect.move(self.speed_x, self.speed_y)	

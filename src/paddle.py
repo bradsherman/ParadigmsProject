@@ -23,7 +23,6 @@ class Paddle(pygame.sprite.Sprite):
         self.gs = gs
 
     def tick(self):
-        # self.rect.clamp_ip(pygame.display.get_surface().get_rect())
         self.rect.clamp_ip(self.gs.screen.get_rect())
         pass
 

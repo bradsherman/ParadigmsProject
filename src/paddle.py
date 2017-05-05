@@ -1,4 +1,5 @@
 import pygame
+import json
 
 
 class Paddle(pygame.sprite.Sprite):
@@ -19,10 +20,6 @@ class Paddle(pygame.sprite.Sprite):
         self.image_orig = self.image
         self.rect_orig = self.rect
         self.speed = 0
-
-        # print "paddle created at " + self.rect.centerx + ", " + self.rect.centery
-        print "in paddle"
-        # print "paddle created at " + self.rect.center
 
         self.gs = gs
 
@@ -46,7 +43,7 @@ class Paddle(pygame.sprite.Sprite):
                 self.rect = self.rect.move(inc, 0)
             elif key == pygame.K_a:
                 self.rect = self.rect.move(-inc, 0)
-    
-	pos = {'x': self.rect.centerx, 'y': self.rect.centery}
-	pos = json.dumps(pos)
-	self.gs.dataConn.transport.write(pos)
+
+        pos = {'x': self.rect.centerx, 'y': self.rect.centery}
+        pos = json.dumps(pos)
+        self.gs.dataConn.transport.write(pos)

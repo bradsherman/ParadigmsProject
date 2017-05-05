@@ -10,6 +10,8 @@ class GameSpace:
     def __init__(self, DataConnection, player):
         self.dataConn = DataConnection
         self.player = player
+
+    def run(self):
         if self.player == 1:
             self.player1()
         elif self.player == 2:
@@ -27,9 +29,6 @@ class GameSpace:
 
         self.paddle1 = Paddle(self, 1)
         self.paddle2 = Paddle(self, 2)
-        print "after creation"
-        # print "paddle 1 at " + self.paddle1.rect.centerx + ", " + self.paddle1.rect.centery
-        # print "paddle 2 at " + self.paddle2.rect.centerx + ", " + self.paddle2.rect.centery
         self.dataConn.x = self.paddle2.rect.centerx
         self.dataConn.y = self.paddle2.rect.centery
         self.ball = Ball(self, 45)

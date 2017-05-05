@@ -28,7 +28,7 @@ class ServerCommandConnection(Protocol):
     def connectionMade(self):
         print "Command connection established"
         self.transport.write("start data connection")
-        reactor.listenTCP(self.server.dataPort1, ServerDataConnectionFactory(self))
+        reactor.listenTCP(self.server.dataPort1, ServerDataConnectionFactory(self.server))
 
     def dataReceived(self, data):
         pass
@@ -41,18 +41,26 @@ class ServerDataConnection(Protocol):
 
     def connectionMade(self):
         print "Data connection established"
+        self.server.player2DataQueue.get().addCallback(self.updatePos)
         # start the game
         try:
             print "starting player 1"
-            GameSpace(self, 1)
+            gs = GameSpace(self, 1)
+            gs.run()
         except:
             return
 
     def dataReceived(self, data):
         print "data: ", data
+        self.server.player2DataQueue.put(data)
+
+    def updatePos(self, data):
+        print "data: ", data
         pos = json.loads(data)
         self.x = pos["x"]
         self.y = pos["y"]
+        self.server.player2DataQueue.get().addCallback(self.updatePos)
+
 
 class ServerDataConnectionFactory(Factory):
     def __init__(self, server):

@@ -1,12 +1,9 @@
 import pygame
 import sys
 from paddle import Paddle
-<<<<<<< HEAD
 from ball import Ball
-=======
 from brick import Brick
 
->>>>>>> f6aa3ee0c891b7962fa4ea5e5bb4887e90b1bd01
 
 class GameSpace:
     def main(self):
@@ -18,12 +15,9 @@ class GameSpace:
 
         self.paddle1 = Paddle(self, 1)
         self.paddle2 = Paddle(self, 2)
-<<<<<<< HEAD
 	self.ball = Ball(self, 45)
-=======
         self.bricks = []
         self.draw_bricks()
->>>>>>> f6aa3ee0c891b7962fa4ea5e5bb4887e90b1bd01
         self.clock = pygame.time.Clock()
 
         while 1:
@@ -38,21 +32,18 @@ class GameSpace:
                 elif event.type == pygame.QUIT:
                     pygame.display.quit()
                     sys.exit()
+
             self.paddle1.tick()
             self.paddle2.tick()
-<<<<<<< HEAD
 	    self.ball.tick()
+            [b.tick() for b in self.bricks]
+
             self.screen.fill(self.black)
             self.screen.blit(self.paddle1.image, self.paddle1.rect)
             self.screen.blit(self.paddle2.image, self.paddle2.rect)
 	    self.screen.blit(self.ball.image, self.ball.rect)
-=======
-            [b.tick() for b in self.bricks]
-            self.screen.fill(self.black)
-            self.screen.blit(self.paddle1.image, self.paddle1.rect)
-            self.screen.blit(self.paddle2.image, self.paddle2.rect)
+
             [self.screen.blit(b.image, b.rect) for b in self.bricks]
->>>>>>> f6aa3ee0c891b7962fa4ea5e5bb4887e90b1bd01
 
             pygame.display.flip()
 

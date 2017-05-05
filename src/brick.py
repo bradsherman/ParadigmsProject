@@ -26,7 +26,8 @@ class Brick(pygame.sprite.Sprite):
     def hit(self):
         self.hp -= 1
         if self.hp == 0:
-            print "brick dead!!!"
+            self.gs.bricks.remove(self)
+            self.kill()
         elif self.hp == 1:
             self.image = pygame.image.load(self.img_hit_path)
             self.image = pygame.transform.scale(self.image, (120, 40))

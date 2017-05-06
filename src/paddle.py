@@ -1,5 +1,5 @@
 import pygame
-import json
+from cPickle import pickle
 
 
 class Paddle(pygame.sprite.Sprite):
@@ -45,5 +45,5 @@ class Paddle(pygame.sprite.Sprite):
                 self.rect = self.rect.move(-inc, 0)
 
         pos = {'paddlex': self.rect.centerx, 'paddley': self.rect.centery}
-        pos = json.dumps(pos)
+        pos = pickle.dumps(pos)
         self.gs.dataConn.transport.write(pos)

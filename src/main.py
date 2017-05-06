@@ -14,13 +14,13 @@ class GameSpace:
     def run(self):
         self.init()
         if self.player == 1:
-            self.dataConn.x = self.paddle2.rect.centerx
-            self.dataConn.y = self.paddle2.rect.centery
+            self.dataConn.paddlex = self.paddle2.rect.centerx
+            self.dataConn.paddley = self.paddle2.rect.centery
             lc = LoopingCall(self.loop1)
             lc.start(0.1)
         elif self.player == 2:
-            self.dataConn.x = self.paddle1.rect.centerx
-            self.dataConn.y = self.paddle1.rect.centery
+            self.dataConn.paddlex = self.paddle1.rect.centerx
+            self.dataConn.paddley = self.paddle1.rect.centery
             lc = LoopingCall(self.loop2)
             lc.start(0.1)
 
@@ -51,7 +51,7 @@ class GameSpace:
                 pygame.display.quit()
                 sys.exit()
 
-        self.paddle2.update(self.dataConn.x, self.dataConn.y)
+        self.paddle2.update(self.dataConn.paddlex, self.dataConn.paddley)
 
         self.paddle1.tick()
         self.paddle2.tick()
@@ -79,7 +79,7 @@ class GameSpace:
                 pygame.display.quit()
                 sys.exit()
 
-        self.paddle1.update(self.dataConn.x, self.dataConn.y)
+        self.paddle1.update(self.dataConn.paddlex, self.dataConn.paddley)
 
         self.paddle1.tick()
         self.paddle2.tick()

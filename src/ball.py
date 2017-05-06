@@ -1,6 +1,6 @@
 import pygame
 import math
-import json
+from cPickle import pickle
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, gs, angle):
@@ -49,7 +49,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.speed_x, self.speed_y)
         if self.gs.player == 1:
             pos = {'ballx': self.rect.centerx, 'bally': self.rect.centery}
-            pos = json.dumps(pos)
+            pos = pickle.dumps(pos)
             self.gs.dataConn.transport.write(pos)
         if self.gs.player == 2:
             self.rect.centerx = self.gs.dataConn.ballx

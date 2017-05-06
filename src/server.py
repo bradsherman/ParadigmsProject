@@ -1,17 +1,19 @@
 from twisted.internet.protocol import Factory
+from twisted.internet.protocol import Protocol
 from twisted.internet.defer import DeferredQueue
 from twisted.internet import reactor
 from main import GameSpace
 import json
+from cPickle import pickle
 
 
 class Server(object):
 
     def __init__(self):
-        # 10.18.8.119
         self.commandPort1 = 9000
         self.dataPort1 = 9002
-        self.player2DataQueue = DeferredQueue()
+        self.player2PaddleQueue = DeferredQueue()
+        self.player2BallQueue = DeferredQueue()
 
     def run(self):
         reactor.listenTCP(self.commandPort1, ServerCommandConnectionFactory(self))
@@ -54,7 +56,7 @@ class ServerDataConnection(Protocol):
     def updatePos(self, data):
         print "data: ", data
         try:
-            pos = json.loads(data)
+            pos = pickle.loads(data)
             self.paddlex = pos["paddlex"]
             self.paddley = pos["paddley"]
             self.server.player2DataQueue.get().addCallback(self.updatePos)

@@ -11,6 +11,7 @@ class Client(object):
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
+        self.player1OutgoingDataQueue = DeferredQueue()
 
     def run(self):
         reactor.connectTCP(self.server_host, self.commandPort, ClientCommandConnectionFactory(self))
@@ -52,6 +53,7 @@ class ClientDataConnection(Protocol):
 
     def connectionMade(self):
         self.client.player1DataQueue.get().addCallback(self.updatePos)
+        self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
         try:
             print 'starting player 2'
             gs = GameSpace(self, 2)
@@ -61,7 +63,9 @@ class ClientDataConnection(Protocol):
 
     def dataReceived(self, data):
         self.client.player1DataQueue.put(data)
-        pass
+
+    def sendData(self, data):
+        self.client.player1OutgoingDataQueue.put(data)
 
     def updatePos(self, data):
         try:
@@ -82,7 +86,10 @@ class ClientDataConnection(Protocol):
         except:
             print 'could not parse data'
             self.client.player1DataQueue.get().addCallback(self.updatePos)
-            pass
+
+    def toServer(self, data):
+        self.transport.write(data)
+        self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
 
 
 if __name__ == "__main__":

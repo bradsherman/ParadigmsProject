@@ -33,8 +33,10 @@ class ServerCommandConnection(Protocol):
 class ServerDataConnection(Protocol):
     def __init__(self, server):
         self.server = server
-        self.x = 0
-        self.y = 0
+        self.ballx = 0
+        self.bally = 0
+        self.paddlex = 0
+        self.paddley = 0
 
     def connectionMade(self):
         print "Data connection established"
@@ -54,8 +56,10 @@ class ServerDataConnection(Protocol):
         print "data: ", data
         try:
             pos = json.loads(data)
-            self.x = pos["x"]
-            self.y = pos["y"]
+            self.paddlex = pos["paddlex"]
+            self.paddley = pos["paddley"]
+            self.ballx = pos["ballx"]
+            self.bally = pos["bally"]
             self.server.player2DataQueue.get().addCallback(self.updatePos)
         except:
             print "Couldn't parse data"

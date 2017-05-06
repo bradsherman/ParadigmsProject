@@ -67,21 +67,6 @@ class GameSpace:
 
         pygame.display.flip()
 
-    def player2(self):
-
-        pygame.init()
-        pygame.key.set_repeat(1, 50)
-        self.size = self.width, self.height = (655, 740)
-        self.black = 0, 0, 0
-        self.screen = pygame.display.set_mode(self.size)
-
-        self.paddle1 = Paddle(self, 1)
-        self.paddle2 = Paddle(self, 2)
-        self.ball = Ball(self, 45)
-        self.bricks = []
-        self.draw_bricks()
-        self.clock = pygame.time.Clock()
-
     def loop2(self):
         self.clock.tick(60)
         for event in pygame.event.get():

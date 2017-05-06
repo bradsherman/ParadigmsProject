@@ -11,9 +11,7 @@ class Server(object):
     def __init__(self):
         # 10.18.8.119
         self.commandPort1 = 9000
-        # self.commandPort2 = 9001
         self.dataPort1 = 9002
-        # self.dataPort2 = 9003
         self.player2CommandQueue = DeferredQueue()
         self.player2DataQueue = DeferredQueue()
 

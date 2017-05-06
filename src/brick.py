@@ -6,7 +6,7 @@ class Brick(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gs = gs
         self.x = x
-        self.y =y
+        self.y = y
         self.img_path = './data/brick.png'
         self.img_hit_path = './data/brick_hit.png'
         self.image = pygame.image.load(self.img_path)

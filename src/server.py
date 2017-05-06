@@ -11,7 +11,8 @@ class Server(object):
     def __init__(self):
         self.commandPort1 = 9000
         self.dataPort1 = 9002
-        self.player2DataQueue = DeferredQueue()
+        self.player2IncomingDataQueue = DeferredQueue()
+        self.player2OutgoingDataQueue = DeferredQueue()
 
     def run(self):
         reactor.listenTCP(self.commandPort1, ServerCommandConnectionFactory(self))
@@ -37,7 +38,8 @@ class ServerDataConnection(Protocol):
 
     def connectionMade(self):
         print "Data connection established"
-        self.server.player2DataQueue.get().addCallback(self.updatePos)
+        self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)
+        self.server.player2OutgoingDataQueue.get().addCallback(self.toClient)
         # start the game
         try:
             print "starting player 1"
@@ -47,7 +49,10 @@ class ServerDataConnection(Protocol):
             return
 
     def dataReceived(self, data):
-        self.server.player2DataQueue.put(data)
+        self.server.player2IncomingDataQueue.put(data)
+
+    def sendData(self, data):
+        self.server.player2OutgoingDataQueue.put(data)
 
     def updatePos(self, data):
         # print "data: ", data
@@ -55,11 +60,14 @@ class ServerDataConnection(Protocol):
             pos = pickle.loads(data)
             self.paddlex = pos["paddlex"]
             self.paddley = pos["paddley"]
-            self.server.player2DataQueue.get().addCallback(self.updatePos)
+            self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)
         except:
             print "Couldn't parse data"
-            self.server.player2DataQueue.get().addCallback(self.updatePos)
-            pass
+            self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)
+
+    def toClient(self, data):
+        self.transport.write(data)
+        self.server.player2OutgoingDataQueue.get().addCallback(self.toClient)
 
 
 class ServerDataConnectionFactory(Factory):

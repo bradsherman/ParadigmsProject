@@ -29,12 +29,15 @@ class Brick(pygame.sprite.Sprite):
             self.update()
         elif pygame.sprite.collide_rect(self.gs.ball, self):
             self.hit()
+            self.update()
 
     def hit(self):
+        print "in hit"
         self.hp -= 1
-        b = {'brick_id': self.hp}
-        b = pickle.loads(b)
-        self.gs.dataConn.transport.write(b)
+        b1 = {'brick_id': self.id, 'brick_hp': self.hp}
+        b = pickle.dumps(b1)
+        self.gs.dataConn.sendData(b)
+        print "sent data: ", b1
 
     def update(self):
         if self.hp == 0:

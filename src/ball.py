@@ -56,7 +56,7 @@ class Ball(pygame.sprite.Sprite):
         if self.gs.player == 1:
             pos = {'ballx': self.rect.centerx, 'bally': self.rect.centery}
             pos = pickle.dumps(pos)
-            self.gs.dataConn.transport.write(pos)
+            self.gs.dataConn.sendData(pos)
 
         if self.gs.player == 2:
             self.rect.centerx = self.gs.dataConn.ballx

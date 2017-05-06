@@ -32,8 +32,6 @@ class ServerCommandConnection(Protocol):
 class ServerDataConnection(Protocol):
     def __init__(self, server):
         self.server = server
-        self.ballx = 0
-        self.bally = 0
         self.paddlex = 0
         self.paddley = 0
 

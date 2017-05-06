@@ -1,26 +1,29 @@
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
+from twisted.internet.defer import DeferredQueue
 from main import GameSpace
+import json
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.26.14.44'
+        self.server_host = '10.18.12.41'
         self.commandPort = 9000
         self.dataPort = 9002
+	self.player1DataQueue = DeferredQueue()
 
     def run(self):
-        reactor.connectTCP(self.server_host, self.commandPort, MyCommandConnectionFactory(self))
+        reactor.connectTCP(self.server_host, self.commandPort, ClientCommandConnectionFactory(self))
         reactor.run()
 
-class MyCommandConnectionFactory(ClientFactory):
+class ClientCommandConnectionFactory(ClientFactory):
     def __init__(self, client):
-        self.myconn = MyCommandConnection(client)
+        self.myconn = ClientCommandConnection(client)
 
     def buildProtocol(self, addr):
         return self.myconn
 
-class MyCommandConnection(Protocol):
+class ClientCommandConnection(Protocol):
     def __init__(self, client):
         self.client = client
 
@@ -29,17 +32,23 @@ class MyCommandConnection(Protocol):
 
     def dataReceived(self, data):
         if data == 'start data connection':
-            reactor.connectTCP(self.client.server_host, self.client.dataPort, MyDataConnectionFactory())
+            reactor.connectTCP(self.client.server_host, self.client.dataPort, ClientDataConnectionFactory(self.client))
 
-class MyDataConnectionFactory(ClientFactory):
-    def __init__(self):
-        self.myconn = MyDataConnection()
+class ClientDataConnectionFactory(ClientFactory):
+    def __init__(self, client):
+        self.myconn = ClientDataConnection(client)
 
     def buildProtocol(self, addr):
         return self.myconn
 
-class MyDataConnection(Protocol):
+class ClientDataConnection(Protocol):
+    def __init__(self, client):
+	self.client = client
+	self.x = 0
+	self.y = 0
+
     def connectionMade(self):
+        self.client.player1DataQueue.get().addCallback(self.updatePos)
         try:
             print 'starting player 2'
             gs = GameSpace(self, 2)
@@ -48,7 +57,21 @@ class MyDataConnection(Protocol):
             return
 
     def dataReceived(self, data):
+	print "data: ", data
+	self.client.player1DataQueue.put(data)
         pass
+    
+    def updatePos(self, data):
+        print "data: ", data
+	try:
+	    pos = json.loads(data)
+	    self.x = pos["x"]
+	    self.y = pos["y"]
+	    self.client.player1DataQueue.get().addCallback(self.updatePos)
+	except:
+	    print 'could not parse data'
+	    self.client.player1DataQueue.get().addCallback(self.updatePos)
+	    pass
 
 
 if __name__ == "__main__":

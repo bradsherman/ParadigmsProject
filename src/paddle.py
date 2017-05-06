@@ -1,5 +1,5 @@
 import pygame
-from cPickle import pickle
+import cPickle as pickle
 
 
 class Paddle(pygame.sprite.Sprite):

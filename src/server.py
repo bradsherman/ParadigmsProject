@@ -3,8 +3,7 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.defer import DeferredQueue
 from twisted.internet import reactor
 from main import GameSpace
-import json
-from cPickle import pickle
+import cPickle as pickle
 
 
 class Server(object):

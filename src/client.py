@@ -3,7 +3,7 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 from main import GameSpace
-import json
+import cPickle as pickle
 
 class Client(object):
     def __init__(self):
@@ -64,7 +64,7 @@ class ClientDataConnection(Protocol):
     def updatePos(self, data):
         print "data: ", data
         try:
-            pos = json.loads(data)
+            pos = pickle.loads(data)
             if "paddlex" in pos.keys():
                 self.paddlex = pos["paddlex"]
                 self.paddley = pos["paddley"]

@@ -1,6 +1,6 @@
 import pygame
 import math
-from cPickle import pickle
+import cPickle as pickle
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, gs, angle):

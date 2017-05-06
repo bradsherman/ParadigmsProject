@@ -22,10 +22,10 @@ class Brick(pygame.sprite.Sprite):
 
     def tick(self):
         # check collision with ball
-        if pygame.sprite.collide_rect(self.gs.ball, self):
-            self.hit()
-        if self.gs.dataConn.brick_to_update == 1:
+        if self.gs.player == 2:
             self.hp = self.gs.dataConn.bricks[self.id]
+        elif pygame.sprite.collide_rect(self.gs.ball, self):
+            self.hit()
 
     def hit(self):
         self.hp -= 1

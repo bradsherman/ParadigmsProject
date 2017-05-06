@@ -48,7 +48,6 @@ class ClientDataConnection(Protocol):
         self.paddley = 0
         self.ballx = 0
         self.bally = 0
-        self.brick_to_update = 0
         self.bricks = {}
 
     def connectionMade(self):

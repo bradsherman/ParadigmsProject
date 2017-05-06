@@ -98,11 +98,14 @@ class GameSpace:
         pygame.display.flip()
 
     def draw_bricks(self):
+        h = 0
         for i in range(65, self.width - 65, self.width / 5):
             for j in [25, 75]:
-                self.bricks.append(Brick(self, i, j))
+                self.bricks.append(Brick(self, i, j, h))
+                h += 1
             for k in [self.height - 25, self.height - 75]:
-                self.bricks.append(Brick(self, i, k))
+                self.bricks.append(Brick(self, i, k, h))
+                h += 1
 
 
 if __name__ == '__main__':

@@ -41,6 +41,10 @@ class Ball(pygame.sprite.Sprite):
         # Check for collision with bricks
         for brick in self.gs.bricks:
             if self.rect.colliderect(brick.rect):
+                if self.gs.player == 1:
+                    data = {'brick_id': brick.id, 'brick_hp': brick.hp}
+                    data = pickle.dumps(data)
+                    self.gs.dataConn.transport.write(data)
                 if self.rect.centery > brick.rect.top or self.rect.centery < brick.rect.bottom:
                     self.speed_y = - self.speed_y
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:

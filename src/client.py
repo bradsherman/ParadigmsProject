@@ -46,8 +46,10 @@ class ClientDataConnection(Protocol):
         self.client = client
         self.paddlex = 0
         self.paddley = 0
-	self.ballx = 0
-	self.bally = 0
+        self.ballx = 0
+        self.bally = 0
+        self.brick_to_update = 0
+        self.bricks = {}
 
     def connectionMade(self):
         self.client.player1DataQueue.get().addCallback(self.updatePos)
@@ -65,15 +67,18 @@ class ClientDataConnection(Protocol):
     def updatePos(self, data):
         try:
             pos = pickle.loads(data)
-	    print "data: ", pos
+            print "data: ", pos
             if "paddlex" in pos.keys():
-		print "updating paddle"
+                print "updating paddle"
                 self.paddlex = pos["paddlex"]
                 self.paddley = pos["paddley"]
             if "ballx" in pos.keys():
-		print "updating ball"
+                print "updating ball"
                 self.ballx = pos["ballx"]
                 self.bally = pos["bally"]
+            if "brick_id" in pos.keys():
+                self.brick_to_update = 1
+                self.bricks[pos["brick_id"]] = pos["brick_hp"]
             self.client.player1DataQueue.get().addCallback(self.updatePos)
         except:
             print 'could not parse data'

@@ -2,11 +2,12 @@ import pygame
 
 
 class Brick(pygame.sprite.Sprite):
-    def __init__(self, gs, x, y):
+    def __init__(self, gs, x, y, i):
         pygame.sprite.Sprite.__init__(self)
         self.gs = gs
         self.x = x
         self.y = y
+        self.id = i
         self.img_path = './data/brick.png'
         self.img_hit_path = './data/brick_hit.png'
         self.image = pygame.image.load(self.img_path)
@@ -17,11 +18,14 @@ class Brick(pygame.sprite.Sprite):
         self.image_orig = self.image
         self.rect_orig = self.rect
         self.hp = 2
+        self.gs.dataConn.bricks[self.id] = self.hp
 
     def tick(self):
         # check collision with ball
         if pygame.sprite.collide_rect(self.gs.ball, self):
             self.hit()
+        if self.gs.dataConn.brick_to_update == 1:
+            self.hp = self.gs.dataConn.bricks[self.id]
 
     def hit(self):
         self.hp -= 1

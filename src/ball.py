@@ -46,11 +46,14 @@ class Ball(pygame.sprite.Sprite):
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
                     self.speed_x = - self.speed_x
                 break
+
         self.rect = self.rect.move(self.speed_x, self.speed_y)
+
         if self.gs.player == 1:
             pos = {'ballx': self.rect.centerx, 'bally': self.rect.centery}
             pos = pickle.dumps(pos)
             self.gs.dataConn.transport.write(pos)
+
         if self.gs.player == 2:
             self.rect.centerx = self.gs.dataConn.ballx
             self.rect.centery = self.gs.dataConn.bally

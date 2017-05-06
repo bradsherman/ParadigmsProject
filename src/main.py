@@ -35,6 +35,8 @@ class GameSpace:
         self.paddle1 = Paddle(self, 1)
         self.paddle2 = Paddle(self, 2)
         self.ball = Ball(self, 45)
+        self.dataConn.ballx = self.ball.rect.centerx
+        self.dataConn.bally = self.ball.rect.centery
         self.bricks = []
         self.draw_bricks()
         self.clock = pygame.time.Clock()

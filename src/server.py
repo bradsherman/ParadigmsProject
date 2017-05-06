@@ -11,8 +11,7 @@ class Server(object):
     def __init__(self):
         self.commandPort1 = 9000
         self.dataPort1 = 9002
-        self.player2PaddleQueue = DeferredQueue()
-        self.player2BallQueue = DeferredQueue()
+        self.player2DataQueue = DeferredQueue()
 
     def run(self):
         reactor.listenTCP(self.commandPort1, ServerCommandConnectionFactory(self))
@@ -53,7 +52,7 @@ class ServerDataConnection(Protocol):
         self.server.player2DataQueue.put(data)
 
     def updatePos(self, data):
-        print "data: ", data
+        # print "data: ", data
         try:
             pos = pickle.loads(data)
             self.paddlex = pos["paddlex"]

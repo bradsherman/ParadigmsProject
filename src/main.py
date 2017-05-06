@@ -12,16 +12,19 @@ class GameSpace:
         self.player = player
 
     def run(self):
+        self.init()
         if self.player == 1:
-            self.player1()
+            self.dataConn.x = self.paddle2.rect.centerx
+            self.dataConn.y = self.paddle2.rect.centery
             lc = LoopingCall(self.loop1)
             lc.start(0.1)
         elif self.player == 2:
-            self.player2()
+            self.dataConn.x = self.paddle1.rect.centerx
+            self.dataConn.y = self.paddle1.rect.centery
             lc = LoopingCall(self.loop2)
             lc.start(0.1)
 
-    def player1(self):
+    def init(self):
 
         pygame.init()
         pygame.key.set_repeat(1, 50)
@@ -31,14 +34,11 @@ class GameSpace:
 
         self.paddle1 = Paddle(self, 1)
         self.paddle2 = Paddle(self, 2)
-        self.dataConn.x = self.paddle2.rect.centerx
-        self.dataConn.y = self.paddle2.rect.centery
         self.ball = Ball(self, 45)
         self.bricks = []
         self.draw_bricks()
         self.clock = pygame.time.Clock()
 
-        # while 1:
     def loop1(self):
         self.clock.tick(60)
         for event in pygame.event.get():
@@ -47,7 +47,6 @@ class GameSpace:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.paddle1.move(event.key)
-                # self.paddle2.move(event.key)
             elif event.type == pygame.QUIT:
                 pygame.display.quit()
                 sys.exit()
@@ -70,8 +69,6 @@ class GameSpace:
 
     def player2(self):
 
-        # make sure we are connected before we start
-
         pygame.init()
         pygame.key.set_repeat(1, 50)
         self.size = self.width, self.height = (655, 740)
@@ -80,42 +77,38 @@ class GameSpace:
 
         self.paddle1 = Paddle(self, 1)
         self.paddle2 = Paddle(self, 2)
-        self.dataConn.x = self.paddle1.rect.centerx
-        self.dataConn.y = self.paddle1.rect.centery
         self.ball = Ball(self, 45)
         self.bricks = []
         self.draw_bricks()
         self.clock = pygame.time.Clock()
 
-        # while 1:
-        def loop2(self):
-            self.clock.tick(60)
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    pygame.display.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    # self.paddle1.move(event.key)
-                    self.paddle2.move(event.key)
-                elif event.type == pygame.QUIT:
-                    pygame.display.quit()
-                    sys.exit()
+    def loop2(self):
+        self.clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                pygame.display.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                self.paddle2.move(event.key)
+            elif event.type == pygame.QUIT:
+                pygame.display.quit()
+                sys.exit()
 
-            self.paddle1.update(self.dataConn.x, self.dataConn.y)
+        self.paddle1.update(self.dataConn.x, self.dataConn.y)
 
-            self.paddle1.tick()
-            self.paddle2.tick()
-            self.ball.tick()
-            [b.tick() for b in self.bricks]
+        self.paddle1.tick()
+        self.paddle2.tick()
+        self.ball.tick()
+        [b.tick() for b in self.bricks]
 
-            self.screen.fill(self.black)
-            self.screen.blit(self.paddle1.image, self.paddle1.rect)
-            self.screen.blit(self.paddle2.image, self.paddle2.rect)
-            self.screen.blit(self.ball.image, self.ball.rect)
+        self.screen.fill(self.black)
+        self.screen.blit(self.paddle1.image, self.paddle1.rect)
+        self.screen.blit(self.paddle2.image, self.paddle2.rect)
+        self.screen.blit(self.ball.image, self.ball.rect)
 
-            [self.screen.blit(b.image, b.rect) for b in self.bricks]
+        [self.screen.blit(b.image, b.rect) for b in self.bricks]
 
-            pygame.display.flip()
+        pygame.display.flip()
 
     def draw_bricks(self):
         for i in range(65, self.width - 65, self.width / 5):

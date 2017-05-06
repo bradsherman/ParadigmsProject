@@ -13,7 +13,7 @@ class Ball(pygame.sprite.Sprite):
         self.gs = gs
         self.rect.center = self.gs.screen.get_rect().center
 
-        self.speed = 2
+        self.speed = 15
         self.angle = angle
         self.speed_x = self.speed * math.cos(angle)
         self.speed_y = self.speed * math.sin(angle)

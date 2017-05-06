@@ -12,7 +12,6 @@ class Server(object):
         # 10.18.8.119
         self.commandPort1 = 9000
         self.dataPort1 = 9002
-        self.player2CommandQueue = DeferredQueue()
         self.player2DataQueue = DeferredQueue()
 
     def run(self):
@@ -49,15 +48,19 @@ class ServerDataConnection(Protocol):
             return
 
     def dataReceived(self, data):
-        print "data: ", data
         self.server.player2DataQueue.put(data)
 
     def updatePos(self, data):
         print "data: ", data
-        pos = json.loads(data)
-        self.x = pos["x"]
-        self.y = pos["y"]
-        self.server.player2DataQueue.get().addCallback(self.updatePos)
+        try:
+            pos = json.loads(data)
+            self.x = pos["x"]
+            self.y = pos["y"]
+            self.server.player2DataQueue.get().addCallback(self.updatePos)
+        except:
+            print "Couldn't parse data"
+            self.server.player2DataQueue.get().addCallback(self.updatePos)
+            pass
 
 
 class ServerDataConnectionFactory(Factory):

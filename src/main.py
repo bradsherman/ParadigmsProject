@@ -13,10 +13,12 @@ class GameSpace:
 
     def run(self):
         if self.player == 1:
-            lc = LoopingCall(self.player1)
+            self.player1()
+            lc = LoopingCall(self.loop1)
             lc.start(0.1)
         elif self.player == 2:
-            lc = LoopingCall(self.player2)
+            self.player2()
+            lc = LoopingCall(self.loop2)
             lc.start(0.1)
 
     def player1(self):
@@ -37,6 +39,7 @@ class GameSpace:
         self.clock = pygame.time.Clock()
 
         # while 1:
+    def loop1(self):
         self.clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
@@ -44,7 +47,7 @@ class GameSpace:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.paddle1.move(event.key)
-                self.paddle2.move(event.key)
+                # self.paddle2.move(event.key)
             elif event.type == pygame.QUIT:
                 pygame.display.quit()
                 sys.exit()
@@ -84,7 +87,8 @@ class GameSpace:
         self.draw_bricks()
         self.clock = pygame.time.Clock()
 
-        while 1:
+        # while 1:
+        def loop2(self):
             self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:

@@ -44,8 +44,8 @@ class ClientDataConnectionFactory(ClientFactory):
 class ClientDataConnection(Protocol):
     def __init__(self, client):
 	self.client = client
-	self.x = 0
-	self.y = 0
+	self.paddlex = 0
+	self.paddley = 0
 
     def connectionMade(self):
         self.client.player1DataQueue.get().addCallback(self.updatePos)
@@ -65,8 +65,12 @@ class ClientDataConnection(Protocol):
         print "data: ", data
 	try:
 	    pos = json.loads(data)
-	    self.x = pos["x"]
-	    self.y = pos["y"]
+	    if "paddlex" in pos.keys():
+		self.paddlex = pos["paddlex"]
+		self.paddley = pos["paddley"]
+	    if "ballx" in pos.keys():
+		self.ballx = pos["ballx"]
+		self.bally = pos["bally"]
 	    self.client.player1DataQueue.get().addCallback(self.updatePos)
 	except:
 	    print 'could not parse data'

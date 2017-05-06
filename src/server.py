@@ -1,5 +1,4 @@
 from twisted.internet.protocol import Factory
-from twisted.internet.protocol import Protocol
 from twisted.internet.defer import DeferredQueue
 from twisted.internet import reactor
 from main import GameSpace
@@ -58,8 +57,6 @@ class ServerDataConnection(Protocol):
             pos = json.loads(data)
             self.paddlex = pos["paddlex"]
             self.paddley = pos["paddley"]
-            self.ballx = pos["ballx"]
-            self.bally = pos["bally"]
             self.server.player2DataQueue.get().addCallback(self.updatePos)
         except:
             print "Couldn't parse data"

@@ -46,6 +46,8 @@ class ClientDataConnection(Protocol):
         self.client = client
         self.paddlex = 0
         self.paddley = 0
+	self.ballx = 0
+	self.bally = 0
 
     def connectionMade(self):
         self.client.player1DataQueue.get().addCallback(self.updatePos)
@@ -57,18 +59,19 @@ class ClientDataConnection(Protocol):
             return
 
     def dataReceived(self, data):
-        print "data: ", data
         self.client.player1DataQueue.put(data)
         pass
 
     def updatePos(self, data):
-        print "data: ", data
         try:
             pos = pickle.loads(data)
+	    print "data: ", pos
             if "paddlex" in pos.keys():
+		print "updating paddle"
                 self.paddlex = pos["paddlex"]
                 self.paddley = pos["paddley"]
             if "ballx" in pos.keys():
+		print "updating ball"
                 self.ballx = pos["ballx"]
                 self.bally = pos["bally"]
             self.client.player1DataQueue.get().addCallback(self.updatePos)

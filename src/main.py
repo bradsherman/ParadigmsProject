@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 from paddle import Paddle
 from ball import Ball
 from brick import Brick
@@ -48,13 +49,11 @@ class GameSpace:
         self.clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                pygame.display.quit()
-                sys.exit()
+                self.exit()
             if event.type == pygame.KEYDOWN:
                 self.paddle1.move(event.key)
             elif event.type == pygame.QUIT:
-                pygame.display.quit()
-                sys.exit()
+                self.exit()
 
         self.paddle2.update(self.dataConn.paddlex, self.dataConn.paddley)
 
@@ -81,13 +80,12 @@ class GameSpace:
         self.clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                pygame.display.quit()
-                sys.exit()
+                print "quitting"
+                self.exit()
             if event.type == pygame.KEYDOWN:
                 self.paddle2.move(event.key)
             elif event.type == pygame.QUIT:
-                pygame.display.quit()
-                sys.exit()
+                self.exit()
 
         self.paddle1.update(self.dataConn.paddlex, self.dataConn.paddley)
 
@@ -164,6 +162,15 @@ class GameSpace:
     def add_player(self):
         self.num_players = 2
 
+    def exit(self):
+        self.quit_game()
+        print "telling data conn to shutdown"
+        self.dataConn.shutdown_other()
+        time.sleep(1)
+        self.dataConn.shutdown()
+
+    def quit_game(self):
+        pygame.display.quit()
 
 if __name__ == '__main__':
     gs = GameSpace(None, 1)

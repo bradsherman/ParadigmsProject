@@ -3,6 +3,8 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 from main import GameSpace
+import sys
+import time
 import cPickle as pickle
 
 class Client(object):
@@ -12,7 +14,6 @@ class Client(object):
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
         self.player1OutgoingDataQueue = DeferredQueue()
-        # self.commandQueue = DeferredQueue()
 
     def run(self):
         reactor.connectTCP(self.server_host, self.commandPort, ClientCommandConnectionFactory(self))
@@ -29,8 +30,8 @@ class ClientCommandConnection(Protocol):
     def __init__(self, client):
         self.client = client
 
-    # def connectionMade(self):
-    #     self.client.commandQueue.get().addCallback(self.process)
+    def connectionMade(self):
+        pass
 
     def dataReceived(self, data):
         print data
@@ -39,16 +40,6 @@ class ClientCommandConnection(Protocol):
             self.client.gs.add_player()
         elif data == 'start data connection':
             reactor.connectTCP(self.client.server_host, self.client.dataPort, ClientDataConnectionFactory(self.client))
-        # self.client.commandQueue.put(data)
-
-    # def process(self, data):
-    #     print data
-    #     if data == 'player 1 ready':
-    #         print "player 1 ready"
-    #         self.client.gs.add_player()
-    #     elif data == 'start data connection':
-    #         reactor.connectTCP(self.client.server_host, self.client.dataPort, ClientDataConnectionFactory(self.client))
-    #     self.client.commandQueue.get().addCallback(self.process)
 
 class ClientDataConnectionFactory(ClientFactory):
     def __init__(self, client):
@@ -75,7 +66,9 @@ class ClientDataConnection(Protocol):
             self.gs = GameSpace(self, 2)
             self.gs.run()
         except:
-            return
+            print "stopping reactor"
+            reactor.stop()
+            sys.exit()
 
     def dataReceived(self, data):
         self.client.player1DataQueue.put(data)
@@ -88,6 +81,9 @@ class ClientDataConnection(Protocol):
             pos = pickle.loads(data)
             if "player1" in pos.keys():
                 self.gs.add_player()
+            if "shutdown" in pos.keys():
+                print "shutting down"
+                self.shutdown()
             if "paddlex" in pos.keys():
                 # print "updating paddle"
                 self.paddlex = pos["paddlex"]
@@ -116,6 +112,17 @@ class ClientDataConnection(Protocol):
     def toServer(self, data):
         self.transport.write(data)
         self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
+
+    def shutdown(self):
+        print "stopping reactor"
+        self.gs.quit_game()
+        reactor.stop()
+        sys.exit()
+
+    def shutdown_other(self):
+        print "client data conn shutdown"
+        req = {'shutdown': '1'}
+        self.sendData(pickle.dumps(req))
 
 
 if __name__ == "__main__":

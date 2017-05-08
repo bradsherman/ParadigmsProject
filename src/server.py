@@ -60,7 +60,7 @@ class ServerDataConnection(Protocol):
     def updatePos(self, data):
         try:
             pos = pickle.loads(data)
-            print "data " + data
+            # print "data " + data
             if "player2" in pos.keys():
                 self.gs.add_player()
             if "shutdown" in pos.keys():

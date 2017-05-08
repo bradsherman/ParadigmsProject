@@ -13,6 +13,8 @@ class Server(object):
         self.dataPort1 = 9002
         self.player2IncomingDataQueue = DeferredQueue()
         self.player2OutgoingDataQueue = DeferredQueue()
+        # self.commandQueue = DeferredQueue()
+        # self.outgoingCommandQueue = DeferredQueue()
 
     def run(self):
         reactor.listenTCP(self.commandPort1, ServerCommandConnectionFactory(self))
@@ -27,8 +29,25 @@ class ServerCommandConnection(Protocol):
         self.transport.write("start data connection")
         reactor.listenTCP(self.server.dataPort1, ServerDataConnectionFactory(self.server))
 
+    # def sendData(self, data):
+    #     self.server.outgoingCommandQueue.put(data)
+
+    # def send(self, data):
+    #     self.transport.write(data)
+    #     self.server.outgoingCommandQueue.get().addCallback(self.send)
+
     def dataReceived(self, data):
-        pass
+        if data == 'player 2 ready':
+            print "player 2 ready"
+            self.server.gs.add_player()
+        # self.server.commandQueue.put(data)
+
+    # def process(self, data):
+    #     if data == 'player 2 ready':
+    #         print "player 2 ready"
+    #         self.server.gs.add_player()
+    #     self.server.commandQueue.get().addCallback(self.process)
+
 
 class ServerDataConnection(Protocol):
     def __init__(self, server):
@@ -43,8 +62,8 @@ class ServerDataConnection(Protocol):
         # start the game
         try:
             print "starting player 1"
-            gs = GameSpace(self, 1)
-            gs.run()
+            self.gs = GameSpace(self, 1)
+            self.gs.run()
         except:
             return
 
@@ -55,9 +74,10 @@ class ServerDataConnection(Protocol):
         self.server.player2OutgoingDataQueue.put(data)
 
     def updatePos(self, data):
-        # print "data: ", data
         try:
             pos = pickle.loads(data)
+            if "player2" in pos.keys():
+                self.gs.add_player()
             self.paddlex = pos["paddlex"]
             self.paddley = pos["paddley"]
             self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)

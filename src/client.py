@@ -7,11 +7,12 @@ import cPickle as pickle
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.18.12.41'
+        self.server_host = '10.25.27.38'
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
         self.player1OutgoingDataQueue = DeferredQueue()
+        # self.commandQueue = DeferredQueue()
 
     def run(self):
         reactor.connectTCP(self.server_host, self.commandPort, ClientCommandConnectionFactory(self))
@@ -28,12 +29,26 @@ class ClientCommandConnection(Protocol):
     def __init__(self, client):
         self.client = client
 
-    def connectionMade(self):
-        pass
+    # def connectionMade(self):
+    #     self.client.commandQueue.get().addCallback(self.process)
 
     def dataReceived(self, data):
-        if data == 'start data connection':
+        print data
+        if data == 'player 1 ready':
+            print "player 1 ready"
+            self.client.gs.add_player()
+        elif data == 'start data connection':
             reactor.connectTCP(self.client.server_host, self.client.dataPort, ClientDataConnectionFactory(self.client))
+        # self.client.commandQueue.put(data)
+
+    # def process(self, data):
+    #     print data
+    #     if data == 'player 1 ready':
+    #         print "player 1 ready"
+    #         self.client.gs.add_player()
+    #     elif data == 'start data connection':
+    #         reactor.connectTCP(self.client.server_host, self.client.dataPort, ClientDataConnectionFactory(self.client))
+    #     self.client.commandQueue.get().addCallback(self.process)
 
 class ClientDataConnectionFactory(ClientFactory):
     def __init__(self, client):
@@ -49,15 +64,16 @@ class ClientDataConnection(Protocol):
         self.paddley = 0
         self.ballx = 0
         self.bally = 0
-        self.bricks = {}
+        self.bricks = []
 
     def connectionMade(self):
+        print "data connection established"
         self.client.player1DataQueue.get().addCallback(self.updatePos)
         self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
         try:
             print 'starting player 2'
-            gs = GameSpace(self, 2)
-            gs.run()
+            self.gs = GameSpace(self, 2)
+            self.gs.run()
         except:
             return
 
@@ -70,18 +86,28 @@ class ClientDataConnection(Protocol):
     def updatePos(self, data):
         try:
             pos = pickle.loads(data)
-            print "data: ", pos
+            if "player1" in pos.keys():
+                self.gs.add_player()
             if "paddlex" in pos.keys():
-                print "updating paddle"
+                # print "updating paddle"
                 self.paddlex = pos["paddlex"]
                 self.paddley = pos["paddley"]
             if "ballx" in pos.keys():
-                print "updating ball"
+                # print "updating ball"
                 self.ballx = pos["ballx"]
                 self.bally = pos["bally"]
             if "brick_id" in pos.keys():
-                self.brick_to_update = 1
-                self.bricks[pos["brick_id"]] = pos["brick_hp"]
+                # self.bricks[pos["brick_id"]] = pos["brick_hp"]
+                for b in self.bricks:
+                    if b.id == pos["brick_id"]:
+                        print "data: ", pos
+                        print "updating brick " + str(b.id)
+                        if "brick_hp" in pos:
+                            b.hp = pos["brick_hp"]
+                        else:
+                            b.hp = 0
+                # print "updated bricks"
+                # print [str(b2.id) + " = " + str(b2.hp) for b2 in self.bricks]
             self.client.player1DataQueue.get().addCallback(self.updatePos)
         except:
             print 'could not parse data'

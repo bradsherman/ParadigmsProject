@@ -49,9 +49,7 @@ class ServerDataConnection(Protocol):
             self.gs = GameSpace(self, 1)
             self.gs.run()
         except:
-            print "stopping reactor"
-            reactor.stop()
-            sys.exit()
+            pass
 
     def dataReceived(self, data):
         self.server.player2IncomingDataQueue.put(data)
@@ -79,6 +77,9 @@ class ServerDataConnection(Protocol):
     def toClient(self, data):
         self.transport.write(data)
         self.server.player2OutgoingDataQueue.get().addCallback(self.toClient)
+
+    def connectionLost(self, reason):
+        self.shutdown()
 
     def shutdown(self):
         print "stopping reactor"

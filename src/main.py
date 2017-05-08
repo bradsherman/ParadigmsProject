@@ -50,12 +50,14 @@ class GameSpace:
 
         self.clock.tick(60)
         self.update_counter += 1
-        if self.update_counter == 120:
-            # every 2 seconds do updates
+        if self.update_counter == 60:
+            # every 1 seconds do updates
             print "force update"
+            self.send_brick_update()
             self.send_ball_update()
             self.send_paddle1_update()
             self.send_paddle2_update()
+            self.update_counter = 0
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
@@ -114,11 +116,11 @@ class GameSpace:
         pygame.display.flip()
 
     def send_brick_update(self):
-        print "updating bricks"
-        bricks = self.bricks
-        b = {'bricks': bricks}
-        b = pickle.dumps(b)
-        self.dataConn.sendData(b)
+        b = {'bricks': {}}
+        for brick in self.bricks:
+            b['bricks'][brick.id] = brick.hp
+        b1 = pickle.dumps(b)
+        self.dataConn.sendData(b1)
 
     def send_paddle1_update(self):
         print "updating paddle1"
@@ -140,10 +142,20 @@ class GameSpace:
         print "updating ball from main"
         bx = self.ball.rect.centerx
         by = self.ball.rect.centery
+        print "set ball pos"
         bsx = self.ball.speed_x
         bsy = self.ball.speed_y
-        ball = {'ballx': bx, 'bally': by, 'ballspeedx': bsx, 'ballspeedy': bsy}
-        b = pickle.dumps(ball)
+        print "set ball speed"
+        bl = {}
+        bl['ballx'] = bx
+        bl['bally'] = by
+        print "added ball pos"
+        bl['ballspeedx'] = bsx
+        bl['ballspeedy'] = bsy
+        print "added ball speed"
+        # ball = {'ballx': bx, 'bally': by, 'ballspeedx': bsx, 'ballspeedy': bsy}
+        print "sending ball data: " + str(bl)
+        b = pickle.dumps(bl)
         self.dataConn.sendData(b)
 
     def show_title(self):

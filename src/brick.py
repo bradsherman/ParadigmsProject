@@ -24,28 +24,22 @@ class Brick(pygame.sprite.Sprite):
 
     def tick(self):
         # check collision with ball
-        if self.gs.player == 2:
-            for b in self.gs.dataConn.bricks:
-                if b.id == self.id:
-                    self.hp = b.hp
-                    alive = 1
-            self.update()
-        elif pygame.sprite.collide_rect(self.gs.ball, self):
+        # if self.gs.player == 2:
+        #     for b in self.gs.dataConn.bricks:
+        #         if b.id == self.id:
+        #             self.hp = b.hp
+        #     self.update()
+        if pygame.sprite.collide_rect(self.gs.ball, self):
             self.hit()
             self.update()
+            self.gs.send_brick_update()
 
     def hit(self):
-        # print "updating brick " + str(self.id)
         self.hp -= 1
-        # b1 = {'brick_id': self.id, 'brick_hp': self.hp}
-        # b = pickle.dumps(b1)
-        # self.gs.dataConn.sendData(b)
-        # print [str(b2.id) + " = " + str(b2.hp) for b2 in self.gs.bricks]
 
     def update(self):
         if self.hp <= 0:
             self.gs.bricks.remove(self)
-            # print "calling kill on brick " + str(self.id)
             self.kill()
         elif self.hp == 1:
             self.image = pygame.image.load(self.img_hit_path)

@@ -16,6 +16,7 @@ class GameSpace:
         self.num_players = 1
         self.init_screen()
         self.init_title()
+        self.update_counter = 0
 
     def run(self):
         self.show_title()
@@ -46,11 +47,19 @@ class GameSpace:
             self.screen.blit(self.waiting, (((self.width - self.waiting.get_width()) / 2), ((self.height - self.waiting.get_height()) / 2)))
             pygame.display.flip()
             return
+
         self.clock.tick(60)
+        self.update_counter += 1
+        if self.update_counter == 120:
+            # every 2 seconds do updates
+            self.send_ball_update()
+            self.send_paddle1_update()
+            self.send_paddle2_update()
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 self.exit()
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 self.paddle1.move(event.key)
             elif event.type == pygame.QUIT:
                 self.exit()
@@ -102,6 +111,35 @@ class GameSpace:
         [self.screen.blit(b.image, b.rect) for b in self.bricks]
 
         pygame.display.flip()
+
+    def send_brick_update(self):
+        bricks = self.bricks
+        b = {'bricks': bricks}
+        b = pickle.dumps(b)
+        self.dataConn.sendData(b)
+
+    def send_paddle1_update(self):
+        p1x = self.paddle1.centerx
+        p1y = self.paddle1.centery
+        paddle1 = {'paddle1x': p1x, 'paddle1y': p1y}
+        p = pickle.dumps(paddle1)
+        self.dataConn.sendData(p)
+
+    def send_paddle2_update(self):
+        p2x = self.paddle1.centerx
+        p2y = self.paddle1.centery
+        paddle1 = {'paddle2x': p2x, 'paddle2y': p2y}
+        p = pickle.dumps(paddle1)
+        self.dataConn.sendData(p)
+
+    def send_ball_update(self):
+        bx = self.ball.centerx
+        by = self.ball.center
+        bsx = self.ball.speed_x
+        bsy = self.ball.speed_y
+        ball = {'ballx': bx, 'bally': by, 'ballspeedx': bsx, 'ballspeedy': bsy}
+        b = pickle.dumps(ball)
+        self.dataConn.sendData(b)
 
     def show_title(self):
         while self.title_screen:

@@ -166,8 +166,6 @@ class GameSpace:
         self.quit_game()
         print "telling data conn to shutdown"
         self.dataConn.shutdown_other()
-        time.sleep(1)
-        self.dataConn.shutdown()
 
     def quit_game(self):
         pygame.display.quit()

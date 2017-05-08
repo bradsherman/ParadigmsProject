@@ -46,7 +46,7 @@ class Ball(pygame.sprite.Sprite):
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
                     self.speed_x = - self.speed_x
                 if self.gs.player == 1:
-		    self.gs.send_ball_update()
+		    #self.gs.send_ball_update()
                     '''data = {'brick_id': brick.id, 'brick_hp': brick.hp}
                     data = pickle.dumps(data)
                     self.gs.dataConn.transport.write(data)''' 

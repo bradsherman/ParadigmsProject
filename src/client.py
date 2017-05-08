@@ -9,7 +9,7 @@ import cPickle as pickle
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.18.12.41'
+        self.server_host = '10.18.169.164'
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
@@ -87,19 +87,18 @@ class ClientDataConnection(Protocol):
                 self.gs.paddle1.update(pos["paddle1x"], pos["paddle1y"]) 
                 self.gs.paddle2.update(pos["paddle2x"], pos["paddle2y"]) 
             if "ballx" in pos.keys():
-                # print "updating ball"
 		print "updating ball"
                 self.gs.ball.update(pos["ballx"], pos["bally"], pos["ballspeedx"], pos["ballspeedy"])
-            if "brick_id" in pos.keys():
+            if "bricks" in pos.keys():
+		#print "updating bricks"
+		bricks_hp = pos["bricks"]
+		for brick in self.gs.bricks:
+		    if brick.id in bricks_hp.keys():
+			brick.hp = bricks_hp[brick.id]
+		    else:
+			brick.hp = 0
+		[brick.update() for brick in self.gs.bricks]
                 # self.bricks[pos["brick_id"]] = pos["brick_hp"]
-                for b in self.bricks:
-                    if b.id == pos["brick_id"]:
-                        print "data: ", pos
-                        print "updating brick " + str(b.id)
-                        if "brick_hp" in pos:
-                            b.hp = pos["brick_hp"]
-                        else:
-                            b.hp = 0
                 # print "updated bricks"
                 # print [str(b2.id) + " = " + str(b2.hp) for b2 in self.bricks]
             self.client.player1DataQueue.get().addCallback(self.updatePos)

@@ -64,7 +64,10 @@ class Ball(pygame.sprite.Sprite):
             self.rect.centery = self.gs.dataConn.bally'''
     
     def update(self, x, y, speedx, speedy):
+	print "in ball update() function"
+	print "x:", x, "y:", y, "speedx:", speedx, "speedy:", speedy
 	self.rect.centerx = x
 	self.rect.centery = y
         self.speed_x = speedx
         self.speed_y = speedy 
+	print "ending ball update() function"

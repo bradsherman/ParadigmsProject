@@ -14,10 +14,10 @@ class Ball(pygame.sprite.Sprite):
         self.gs = gs
         self.rect.center = self.gs.screen.get_rect().center
 
-        self.speed = 15
+        self.speed = 6 
         self.angle = angle
-        self.speed_x = self.speed * math.cos(angle)
-        self.speed_y = self.speed * math.sin(angle)
+        self.speed_x = self.speed * math.cos(self.angle)
+        self.speed_y = self.speed * math.sin(self.angle)
 
     def tick(self):
         # Check for collision with wall
@@ -41,23 +41,30 @@ class Ball(pygame.sprite.Sprite):
         # Check for collision with bricks
         for brick in self.gs.bricks:
             if self.rect.colliderect(brick.rect):
-                if self.gs.player == 1:
-                    data = {'brick_id': brick.id, 'brick_hp': brick.hp}
-                    data = pickle.dumps(data)
-                    self.gs.dataConn.transport.write(data)
-                if self.rect.centery > brick.rect.top or self.rect.centery < brick.rect.bottom:
+		if self.rect.centery > brick.rect.top or self.rect.centery < brick.rect.bottom:
                     self.speed_y = - self.speed_y
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
                     self.speed_x = - self.speed_x
+                if self.gs.player == 1:
+		    self.gs.send_ball_update()
+                    '''data = {'brick_id': brick.id, 'brick_hp': brick.hp}
+                    data = pickle.dumps(data)
+                    self.gs.dataConn.transport.write(data)''' 
                 break
 
         self.rect = self.rect.move(self.speed_x, self.speed_y)
 
-        if self.gs.player == 1:
+        '''if self.gs.player == 1:
             pos = {'ballx': self.rect.centerx, 'bally': self.rect.centery}
             pos = pickle.dumps(pos)
             self.gs.dataConn.sendData(pos)
 
         if self.gs.player == 2:
             self.rect.centerx = self.gs.dataConn.ballx
-            self.rect.centery = self.gs.dataConn.bally
+            self.rect.centery = self.gs.dataConn.bally'''
+    
+    def update(self, x, y, speedx, speedy):
+	self.rect.centerx = x
+	self.rect.centery = y
+        self.speed_x = speedx
+        self.speed_y = speedy 

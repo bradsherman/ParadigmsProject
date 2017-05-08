@@ -9,7 +9,7 @@ import cPickle as pickle
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.25.27.38'
+        self.server_host = '10.26.14.44'
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
@@ -82,14 +82,13 @@ class ClientDataConnection(Protocol):
             if "shutdown" in pos.keys():
                 print "shutting down"
                 self.shutdown()
-            if "paddlex" in pos.keys():
+            if "paddle1x" in pos.keys():
                 # print "updating paddle"
-                self.paddlex = pos["paddlex"]
-                self.paddley = pos["paddley"]
+                self.gs.paddle1.update(pos["paddle1x"], pos["paddle1y"]) 
+                self.gs.paddle2.update(pos["paddle2x"], pos["paddle2y"]) 
             if "ballx" in pos.keys():
                 # print "updating ball"
-                self.ballx = pos["ballx"]
-                self.bally = pos["bally"]
+                self.gs.ball.update(pos["ballx"], pos["bally"], pos["ballspeedx"], pos["ballspeedy"])
             if "brick_id" in pos.keys():
                 # self.bricks[pos["brick_id"]] = pos["brick_hp"]
                 for b in self.bricks:

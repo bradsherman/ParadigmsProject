@@ -52,6 +52,7 @@ class GameSpace:
         self.update_counter += 1
         if self.update_counter == 120:
             # every 2 seconds do updates
+            print "force update"
             self.send_ball_update()
             self.send_paddle1_update()
             self.send_paddle2_update()
@@ -113,28 +114,32 @@ class GameSpace:
         pygame.display.flip()
 
     def send_brick_update(self):
+        print "updating bricks"
         bricks = self.bricks
         b = {'bricks': bricks}
         b = pickle.dumps(b)
         self.dataConn.sendData(b)
 
     def send_paddle1_update(self):
-        p1x = self.paddle1.centerx
-        p1y = self.paddle1.centery
+        print "updating paddle1"
+        p1x = self.paddle1.rect.centerx
+        p1y = self.paddle1.rect.centery
         paddle1 = {'paddle1x': p1x, 'paddle1y': p1y}
         p = pickle.dumps(paddle1)
         self.dataConn.sendData(p)
 
     def send_paddle2_update(self):
-        p2x = self.paddle1.centerx
-        p2y = self.paddle1.centery
+        print "updating paddle2"
+        p2x = self.paddle1.rect.centerx
+        p2y = self.paddle1.rect.centery
         paddle1 = {'paddle2x': p2x, 'paddle2y': p2y}
         p = pickle.dumps(paddle1)
         self.dataConn.sendData(p)
 
     def send_ball_update(self):
-        bx = self.ball.centerx
-        by = self.ball.center
+        print "updating ball from main"
+        bx = self.ball.rect.centerx
+        by = self.ball.rect.centery
         bsx = self.ball.speed_x
         bsy = self.ball.speed_y
         ball = {'ballx': bx, 'bally': by, 'ballspeedx': bsx, 'ballspeedy': bsy}

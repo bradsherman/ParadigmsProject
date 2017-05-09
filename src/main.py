@@ -124,7 +124,7 @@ class GameSpace:
         self.dataConn.sendData(b1)
 
     def send_paddle1_update(self):
-        print "updating paddle1"
+        #print "updating paddle1"
         p1x = self.paddle1.rect.centerx
         p1y = self.paddle1.rect.centery
         paddle1 = {'paddle1x': p1x, 'paddle1y': p1y}
@@ -132,7 +132,7 @@ class GameSpace:
         self.dataConn.sendData(p)
 
     def send_paddle2_update(self):
-        print "updating paddle2"
+        #print "updating paddle2"
         p2x = self.paddle2.rect.centerx
         p2y = self.paddle2.rect.centery
         paddle1 = {'paddle2x': p2x, 'paddle2y': p2y}
@@ -156,13 +156,13 @@ class GameSpace:
 	print "formatted ball data"
         self.dataConn.sendData(b)
 	print "sent ball data"'''
-	print "sending ball data"
+	#print "sending ball data"
 	b = {'ball': {}}
 	b['ball']['ballx'] = self.ball.rect.centerx
 	b['ball']['bally'] = self.ball.rect.centery
 	b['ball']['ballspeedx'] = self.ball.speed_x
 	b['ball']['ballspeedy'] = self.ball.speed_y
-	print "ball data: ", b
+	#print "ball data: ", b
         b1 = pickle.dumps(b)
         self.dataConn.sendData(b1)
 

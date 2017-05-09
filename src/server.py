@@ -66,12 +66,11 @@ class ServerDataConnection(Protocol):
             if "shutdown" in pos.keys():
                 print "shutting down"
                 self.shutdown()
-            if "paddlex" in pos.keys():
-                self.paddlex = pos["paddlex"]
-                self.paddley = pos["paddley"]
+            if "paddle2x" in pos.keys():
+                self.gs.paddle2.update(pos["paddle2x"], pos["paddle2y"])
             self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)
         except:
-            print "Couldn't parse data"
+            print "Couldn't parse data", pickle.loads(data)
             self.server.player2IncomingDataQueue.get().addCallback(self.updatePos)
 
     def toClient(self, data):

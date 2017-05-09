@@ -50,12 +50,13 @@ class GameSpace:
 
         self.clock.tick(60)
         self.update_counter += 1
-        if self.update_counter == 60:
-            # every 1 seconds do updates
-            print "force update"
-            self.send_brick_update()
+        if self.update_counter == 30:
             self.send_ball_update()
+	elif self.update_counter == 60:
+            self.send_brick_update()
+	elif self.update_counter == 90:
             self.send_paddle1_update()
+	elif self.update_counter == 120:
             self.send_paddle2_update()
             self.update_counter = 0
 
@@ -67,7 +68,7 @@ class GameSpace:
             elif event.type == pygame.QUIT:
                 self.exit()
 
-        self.paddle2.update(self.dataConn.paddlex, self.dataConn.paddley)
+        #self.paddle2.update(self.dataConn.paddlex, self.dataConn.paddley)
 
         self.paddle1.tick()
         self.paddle2.tick()
@@ -99,7 +100,7 @@ class GameSpace:
             elif event.type == pygame.QUIT:
                 self.exit()
 
-        self.paddle1.update(self.dataConn.paddlex, self.dataConn.paddley)
+        #self.paddle1.update(self.dataConn.paddlex, self.dataConn.paddley)
 
         self.paddle1.tick()
         self.paddle2.tick()
@@ -132,31 +133,38 @@ class GameSpace:
 
     def send_paddle2_update(self):
         print "updating paddle2"
-        p2x = self.paddle1.rect.centerx
-        p2y = self.paddle1.rect.centery
+        p2x = self.paddle2.rect.centerx
+        p2y = self.paddle2.rect.centery
         paddle1 = {'paddle2x': p2x, 'paddle2y': p2y}
         p = pickle.dumps(paddle1)
         self.dataConn.sendData(p)
 
     def send_ball_update(self):
-        print "updating ball from main"
+        '''print "updating ball from main"
         bx = self.ball.rect.centerx
         by = self.ball.rect.centery
-        print "set ball pos"
         bsx = self.ball.speed_x
         bsy = self.ball.speed_y
-        print "set ball speed"
         bl = {}
         bl['ballx'] = bx
         bl['bally'] = by
-        print "added ball pos"
         bl['ballspeedx'] = bsx
         bl['ballspeedy'] = bsy
-        print "added ball speed"
         # ball = {'ballx': bx, 'bally': by, 'ballspeedx': bsx, 'ballspeedy': bsy}
         print "sending ball data: " + str(bl)
         b = pickle.dumps(bl)
+	print "formatted ball data"
         self.dataConn.sendData(b)
+	print "sent ball data"'''
+	print "sending ball data"
+	b = {'ball': {}}
+	b['ball']['ballx'] = self.ball.rect.centerx
+	b['ball']['bally'] = self.ball.rect.centery
+	b['ball']['ballspeedx'] = self.ball.speed_x
+	b['ball']['ballspeedy'] = self.ball.speed_y
+	print "ball data: ", b
+        b1 = pickle.dumps(b)
+        self.dataConn.sendData(b1)
 
     def show_title(self):
         while self.title_screen:

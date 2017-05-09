@@ -9,7 +9,7 @@ import cPickle as pickle
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.18.169.164'
+        self.server_host = '10.26.171.151'
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
@@ -69,6 +69,7 @@ class ClientDataConnection(Protocol):
             pass
 
     def dataReceived(self, data):
+	#print "got data:", pickle.loads(data)
         self.client.player1DataQueue.put(data)
 
     def sendData(self, data):
@@ -85,12 +86,14 @@ class ClientDataConnection(Protocol):
             if "paddle1x" in pos.keys():
                 # print "updating paddle"
                 self.gs.paddle1.update(pos["paddle1x"], pos["paddle1y"]) 
+	    if "paddle2x" in pos.keys():
                 self.gs.paddle2.update(pos["paddle2x"], pos["paddle2y"]) 
-            if "ballx" in pos.keys():
-		print "updating ball"
-                self.gs.ball.update(pos["ballx"], pos["bally"], pos["ballspeedx"], pos["ballspeedy"])
+            if "ball" in pos.keys():
+		#print "got ball data"
+                self.gs.ball.update(pos["ball"]["ballx"], pos["ball"]["bally"], pos["ball"]["ballspeedx"], pos["ball"]["ballspeedy"])
             if "bricks" in pos.keys():
 		#print "updating bricks"
+		print "brick data:", pos["bricks"]
 		bricks_hp = pos["bricks"]
 		for brick in self.gs.bricks:
 		    if brick.id in bricks_hp.keys():
@@ -103,7 +106,7 @@ class ClientDataConnection(Protocol):
                 # print [str(b2.id) + " = " + str(b2.hp) for b2 in self.bricks]
             self.client.player1DataQueue.get().addCallback(self.updatePos)
         except:
-            print 'could not parse data'
+            print 'could not parse data:', pos
             self.client.player1DataQueue.get().addCallback(self.updatePos)
 
     def toServer(self, data):

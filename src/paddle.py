@@ -44,6 +44,6 @@ class Paddle(pygame.sprite.Sprite):
             elif key == pygame.K_a:
                 self.rect = self.rect.move(-inc, 0)
 
-        pos = {'paddlex': self.rect.centerx, 'paddley': self.rect.centery}
+        pos = {'paddle1x': self.rect.centerx, 'paddle1y': self.rect.centery}
         pos = pickle.dumps(pos)
         self.gs.dataConn.sendData(pos)

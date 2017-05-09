@@ -29,10 +29,13 @@ class Brick(pygame.sprite.Sprite):
         #         if b.id == self.id:
         #             self.hp = b.hp
         #     self.update()
-        if pygame.sprite.collide_rect(self.gs.ball, self):
-            self.hit()
-            self.update()
-            self.gs.send_brick_update()
+	if self.gs.player == 1:
+	    if pygame.sprite.collide_rect(self.gs.ball, self):
+		self.hit()
+		self.update()
+		self.gs.send_brick_update()
+	else:
+	    self.update()
 
     def hit(self):
         self.hp -= 1

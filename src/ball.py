@@ -18,6 +18,7 @@ class Ball(pygame.sprite.Sprite):
         self.angle = angle
         self.speed_x = self.speed * math.cos(self.angle)
         self.speed_y = self.speed * math.sin(self.angle)
+	self.update_counter = 0
 
     def tick(self): # Check for collision with wall
         if self.rect.left < 0 or self.rect.right > self.gs.width:
@@ -38,12 +39,19 @@ class Ball(pygame.sprite.Sprite):
                 self.speed_y = -abs(self.speed_y)
 
         # Check for collision with bricks
+	if self.update_counter > 0:
+	    self.update_counter -= 1
+	    return
         for brick in self.gs.bricks:
             if self.rect.colliderect(brick.rect):
-		if self.rect.centery > brick.rect.top or self.rect.centery < brick.rect.bottom:
+		if self.rect.centery < brick.rect.top or self.rect.centery > brick.rect.bottom:
                     self.speed_y = - self.speed_y
+		    break
+		    self.update_counter = 2
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
                     self.speed_x = - self.speed_x
+		    break
+		    self.update_counter = 2
                 if self.gs.player == 1:
 		    pass
 		    #self.gs.send_ball_update()
@@ -64,8 +72,9 @@ class Ball(pygame.sprite.Sprite):
             self.rect.centery = self.gs.dataConn.bally'''
     
     def update(self, x, y, speedx, speedy):
-	print "in ball update() function"
-	print "x:", x, "y:", y, "speedx:", speedx, "speedy:", speedy
+	#print "in ball update() function"
+	#print "x:", x, "y:", y, "speedx:", speedx, "speedy:", speedy
+	self.update_counter = 3
 	self.rect.centerx = x
 	self.rect.centery = y
         self.speed_x = speedx

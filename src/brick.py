@@ -19,20 +19,16 @@ class Brick(pygame.sprite.Sprite):
         self.image_orig = self.image
         self.rect_orig = self.rect
         self.hp = 2
-        if self.gs.player == 2:
-            self.gs.dataConn.bricks.append(self)
+        #if self.gs.player == 2:
+        #    self.gs.dataConn.bricks.append(self)
 
     def tick(self):
-        # check collision with ball
-        # if self.gs.player == 2:
-        #     for b in self.gs.dataConn.bricks:
-        #         if b.id == self.id:
-        #             self.hp = b.hp
-        #     self.update()
+	# Check for collision with ball
 	if self.gs.player == 1:
 	    if pygame.sprite.collide_rect(self.gs.ball, self):
 		self.hit()
 		self.update()
+		# Force update to client's bricks
 		self.gs.send_brick_update()
 	else:
 	    self.update()

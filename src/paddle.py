@@ -24,15 +24,15 @@ class Paddle(pygame.sprite.Sprite):
         self.gs = gs
 
     def tick(self):
+	# Keep paddle on screen
         self.rect.clamp_ip(self.gs.screen.get_rect())
-        pass
 
     def update(self, x, y):
         self.rect.centerx = x
         self.rect.centery = y
 
     def move(self, key):
-        inc = 15
+        inc = 15 # distance by which paddle moves
         if self.player_num == 1:
             if key == pygame.K_RIGHT:
                 self.rect = self.rect.move(inc, 0)
@@ -44,6 +44,7 @@ class Paddle(pygame.sprite.Sprite):
             elif key == pygame.K_a:
                 self.rect = self.rect.move(-inc, 0)
 
+	# Update other player on position
 	if self.player_num == 1:
 	    pos = {'paddle1x': self.rect.centerx, 'paddle1y': self.rect.centery}
 	    pos = pickle.dumps(pos)

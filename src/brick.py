@@ -1,6 +1,4 @@
 import pygame
-import cPickle as pickle
-
 
 class Brick(pygame.sprite.Sprite):
     def __init__(self, gs, x, y, i):
@@ -19,19 +17,17 @@ class Brick(pygame.sprite.Sprite):
         self.image_orig = self.image
         self.rect_orig = self.rect
         self.hp = 2
-        #if self.gs.player == 2:
-        #    self.gs.dataConn.bricks.append(self)
 
     def tick(self):
-	# Check for collision with ball
-	if self.gs.player == 1:
-	    if pygame.sprite.collide_rect(self.gs.ball, self):
-		self.hit()
-		self.update()
-		# Force update to client's bricks
-		self.gs.send_brick_update()
-	else:
-	    self.update()
+        # Check for collision with ball
+        if self.gs.player == 1:
+            if pygame.sprite.collide_rect(self.gs.ball, self):
+                self.hit()
+                self.update()
+                # Force update to client's bricks
+                self.gs.send_brick_update()
+        else:
+            self.update()
 
     def hit(self):
         self.hp -= 1

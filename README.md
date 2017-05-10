@@ -13,7 +13,7 @@ To Play the Game
 ----------------
 First, designate a host (player1) and a client (player2). We have provided a few
 test script to aid in the process of getting the players set up. The host can
-run `src/get_ip.py` to have their ip displayed to the screen and then the client
+run `python src/get_ip.py` to have their ip displayed to the screen and then the client
 can modify `src/client.py` line 11 to contain the correct ip address. Also,
 player1 can run `src/replace_ip.sh` which will get their ip and automatically
 replace it in `src/client.py`. Then player1 simply needs to push the changes to
@@ -22,7 +22,8 @@ should be ready to connect. After that, player1 needs to run the command
 `./player1.py` first to start the server. Once that has happened, player2 can run
 `./player2.py` to connect. Then the game screens will pop up. Player1 moves by
 pressing the right and left arrow keys, and player2 moves by pressing the 'a'
-and 'd' keys.
+and 'd' keys. Once one player quits, the screen will let each player know, and
+then the player should press enter to close the window.
 
 **Note**: This assumes each computer has an installation of python2.7 in
 /usr/bin/

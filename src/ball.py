@@ -20,7 +20,8 @@ class Ball(pygame.sprite.Sprite):
         self.speed_y = self.speed * math.sin(self.angle)
 	self.update_counter = 0
 
-    def tick(self): # Check for collision with wall
+    def tick(self): 
+	# Check for collision with wall
         if self.rect.left < 0 or self.rect.right > self.gs.width:
             self.speed_x = -self.speed_x
         if self.rect.top < 0 or self.rect.bottom > self.gs.height:
@@ -44,39 +45,23 @@ class Ball(pygame.sprite.Sprite):
 	    return
         for brick in self.gs.bricks:
             if self.rect.colliderect(brick.rect):
+		# Check for a vertical collision
 		if self.rect.centery < brick.rect.top or self.rect.centery > brick.rect.bottom:
                     self.speed_y = - self.speed_y
 		    break
 		    self.update_counter = 2
+		# Check for a horizontal collision
                 elif self.rect.centerx > brick.rect.right or self.rect.centerx < brick.rect.left:
                     self.speed_x = - self.speed_x
 		    break
 		    self.update_counter = 2
-                if self.gs.player == 1:
-		    pass
-		    #self.gs.send_ball_update()
-                '''data = {'brick_id': brick.id, 'brick_hp': brick.hp}
-                    data = pickle.dumps(data)
-                    self.gs.dataConn.transport.write(data)''' 
-                #break
 
         self.rect = self.rect.move(self.speed_x, self.speed_y)
 
-        '''if self.gs.player == 1:
-            pos = {'ballx': self.rect.centerx, 'bally': self.rect.centery}
-            pos = pickle.dumps(pos)
-            self.gs.dataConn.sendData(pos)
-
-        if self.gs.player == 2:
-            self.rect.centerx = self.gs.dataConn.ballx
-            self.rect.centery = self.gs.dataConn.bally'''
-    
     def update(self, x, y, speedx, speedy):
-	#print "in ball update() function"
-	#print "x:", x, "y:", y, "speedx:", speedx, "speedy:", speedy
+	# Force update of ball's information
 	self.update_counter = 3
 	self.rect.centerx = x
 	self.rect.centery = y
         self.speed_x = speedx
         self.speed_y = speedy 
-	print "ending ball update() function"

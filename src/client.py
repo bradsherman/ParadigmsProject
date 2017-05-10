@@ -9,13 +9,14 @@ import cPickle as pickle
 
 class Client(object):
     def __init__(self):
-        self.server_host = '10.26.161.186'
+        self.server_host = '10.18.162.207'
         self.commandPort = 9000
         self.dataPort = 9002
         self.player1DataQueue = DeferredQueue()
         self.player1OutgoingDataQueue = DeferredQueue()
 
     def run(self):
+	# Create connection with server
         reactor.connectTCP(self.server_host, self.commandPort, ClientCommandConnectionFactory(self))
         reactor.run()
 
@@ -51,25 +52,19 @@ class ClientDataConnectionFactory(ClientFactory):
 class ClientDataConnection(Protocol):
     def __init__(self, client):
         self.client = client
-        self.paddlex = 0
-        self.paddley = 0
-        self.ballx = 0
-        self.bally = 0
-        self.bricks = []
 
     def connectionMade(self):
         print "data connection established"
         self.client.player1DataQueue.get().addCallback(self.updatePos)
         self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
         try:
-            print 'starting player 2'
+	    # Starting player 2
             self.gs = GameSpace(self, 2)
             self.gs.run()
         except:
             pass
 
     def dataReceived(self, data):
-	#print "got data:", pickle.loads(data)
         self.client.player1DataQueue.put(data)
 
     def sendData(self, data):
@@ -81,14 +76,13 @@ class ClientDataConnection(Protocol):
             if "player1" in pos.keys():
                 self.gs.add_player()
             if "shutdown" in pos.keys():
-                print "shutting down"
+                #print "shutting down"
                 self.shutdown()
             if "paddle1x" in pos.keys():
                 self.gs.paddle1.update(pos["paddle1x"], pos["paddle1y"]) 
 	    if "paddle2x" in pos.keys():
                 self.gs.paddle2.update(pos["paddle2x"], pos["paddle2y"]) 
             if "ball" in pos.keys():
-		#print "got ball data"
                 self.gs.ball.update(pos["ball"]["ballx"], pos["ball"]["bally"], pos["ball"]["ballspeedx"], pos["ball"]["ballspeedy"])
             if "bricks" in pos.keys():
 		bricks_hp = pos["bricks"]
@@ -104,6 +98,7 @@ class ClientDataConnection(Protocol):
             self.client.player1DataQueue.get().addCallback(self.updatePos)
 
     def toServer(self, data):
+	# Callback function for sending data to server
         self.transport.write(data)
         self.client.player1OutgoingDataQueue.get().addCallback(self.toServer)
 
@@ -111,7 +106,7 @@ class ClientDataConnection(Protocol):
         self.shutdown()
 
     def shutdown(self):
-        print "stopping reactor"
+	# Stops game and quits
         self.gs.quit_game()
         reactor.stop()
         sys.exit()
